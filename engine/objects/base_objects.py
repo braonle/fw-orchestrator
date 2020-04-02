@@ -1,56 +1,68 @@
-from ipaddress import IPv4Address, IPv4Network, ip_network, ip_address
-import socket
+from ipaddress import IPv4Address, IPv4Network, ip_address
+from enum import Enum
+
+from engine.config import *
+
+
+class ReturnCode(Enum):
+    SUCCESS = 0
+    OBJECT_NOT_FOUND = -1
+    INVALID_FIELDS = -2
 
 
 class FwObject:
     name: str
     origin_addr: IPv4Address
     raw_config: str
+    username: str
+    password: str
+    secret: str
 
-    def __init__(self, origin_address, obj_name):
+    def __init__(self, origin_address: str, obj_name: str, username: str = USERNAME,
+                 password: str = PASSWORD, secret: str = SECRET):
         self.origin_addr = ip_address(origin_address)
         self.name = obj_name
+        self.username = username
+        self.password = password
+        self.secret = secret
 
-    def fetch_config(self):
-        pass
-
-    def push_config(self):
+    def fetch_config(self) -> ReturnCode:
         pass
 
 
 class HostObject(FwObject):
     ip_addr: IPv4Address
 
-    def __init__(self, origin_address, obj_name, ip):
-        super().__init__(origin_address, obj_name)
-        self.ip_addr = ip_address(ip)
+    def __init__(self, origin_address: str, obj_name: str = None, ip_addr: IPv4Address = None,
+                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
+        super().__init__(origin_address, obj_name, username, password, secret)
+        self.ip_addr = ip_addr
 
 
 class NetworkObject(FwObject):
     prefix: IPv4Network
 
-    def __init__(self, origin_address, obj_name, prefix):
-        super().__init__(origin_address, obj_name)
-        self.prefix = ip_network(prefix, strict=False)
+    def __init__(self, origin_address: str, obj_name: str = None, prefix: IPv4Network = None,
+                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
+        super().__init__(origin_address, obj_name, username, password, secret)
+        self.prefix = prefix
 
 
 class FqdnObject(FwObject):
     fqdn: str
-    ip_addr = None
 
-    def __init__(self, origin_address, obj_name, fqdn):
-        super().__init__(origin_address, obj_name)
+    def __init__(self, origin_address: str, obj_name: str = None, fqdn: str = None,
+                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
+        super().__init__(origin_address, obj_name, username, password, secret)
         self.fqdn = fqdn
-        # TODO Check that the resolution is correct
-        ip = socket.gethostbyname(fqdn)
-        self.ip_addr = ip_address(ip)
 
 
 class AddrRangeObject(FwObject):
-    ip_addr: list
+    first_addr: IPv4Address
+    last_addr: IPv4Address
 
-    def __init__(self, origin_address, obj_name, first_ip, last_ip):
-        super().__init__(origin_address, obj_name)
-        self.ip_addr = [ip_address(first_ip)]
-        # TODO iterate through the range + add check first_ip < last_ip
-        self.ip_addr.append(ip_address(last_ip))
+    def __init__(self, origin_address: str, obj_name: str = None, first: IPv4Address = None, last: IPv4Address = None,
+                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
+        super().__init__(origin_address, obj_name, username, password, secret)
+        self.first_addr = first
+        self.last_addr = last
