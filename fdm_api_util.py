@@ -1,12 +1,9 @@
 #!/usr/bin/env python
-"""Authenticate with FDM and obtain an API access token."""
-
-#import sys
-#from pathlib import Path
 
 import requests
 from requests import HTTPError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from pprint import pformat
 
 from hosts import FDM
 
@@ -62,8 +59,40 @@ def fdm_login(
 
     return access_token
 
+
+def fdm_get_networks(
+    access_token,
+    host=FDM.get("host"),
+    port=FDM.get("port")
+):
+    """Get the list of all Networks in FDM."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/object/networks",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+
 if __name__ == "__main__":
     token = fdm_login()
     if token:
         print("Login was successful!")
-        print(f"Access Token: {token}")
+        print(f"Access Token: {token}\n")
+
+    networks = fdm_get_networks(token)
+
+    print(
+        'Network(s):',
+        pformat(networks),
+        sep="\n",
+    )
