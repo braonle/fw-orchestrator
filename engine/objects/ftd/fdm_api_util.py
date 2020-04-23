@@ -4,22 +4,20 @@ import requests
 from requests import HTTPError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from pprint import pformat
-
-from hosts import FDM
-
+from ipaddress import IPv4Address, IPv4Network, ip_network
 
 # Disable insecure request warnings
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 def fdm_login(
-    host=FDM.get("host"),
-    port=FDM.get("port"),
-    username=FDM.get("username"),
-    password=FDM.get("password"),
+    host,
+    port,
+    username,
+    password,
 ):
     """Login to FDM and return an access token that may be used for API calls.
-    
+
     This login will give you an access token that is valid for ~30 minutes
     with no refresh. Using this token should be fine for short running scripts.
     """
@@ -62,8 +60,8 @@ def fdm_login(
 
 def fdm_get_networks(
     access_token,
-    host=FDM.get("host"),
-    port=FDM.get("port")
+    host,
+    port,
 ):
     """Get the list of all Networks in FDM."""
 
@@ -83,16 +81,38 @@ def fdm_get_networks(
     return response.json()
 
 
-if __name__ == "__main__":
-    token = fdm_login()
-    if token:
-        print("Login was successful!")
-        print(f"Access Token: {token}\n")
+def fdm_create_network(
+    access_token,
+    host,
+    port,
+    name: str = "TEST_NETWORK",
+    description: str = "Test NW from Python",
+    subType: str = "NETWORK",
+    value: str = "1.1.1.0/24"
+):
+    """Create a new network in FDM."""
 
-    networks = fdm_get_networks(token)
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
 
-    print(
-        'Network(s):',
-        pformat(networks),
-        sep="\n",
+    # Data for the network object to be created
+    network_object = {
+        "name": name,
+        "description": description,
+        "subType": subType,
+        "value": value,
+        "type": "networkobject"
+    }
+
+    response = requests.post(
+        f"https://{host}:{port}/api/fdm/latest/object/networks",
+        headers=headers,
+        json=network_object,
+        verify=False,
     )
+    # response.raise_for_status()
+
+    return response.json()
