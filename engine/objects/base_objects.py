@@ -19,7 +19,7 @@ class FwObject:
     password: str
     secret: str
 
-    def __init__(self, origin_address: str, port: int, obj_name: str,
+    def __init__(self, origin_address: str, port: int = None, obj_name: str = None,
                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
         self.origin_addr = ip_address(origin_address)
         self.port = port
@@ -35,7 +35,7 @@ class FwObject:
 class HostObject(FwObject):
     ip_addr: IPv4Address
 
-    def __init__(self, origin_address: str, port: int,
+    def __init__(self, origin_address: str, port: int = None,
                   obj_name: str = None, ip_addr: IPv4Address = None,
                   username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
         super().__init__(origin_address, port, obj_name, username, password, secret)
@@ -45,7 +45,7 @@ class HostObject(FwObject):
 class NetworkObject(FwObject):
     prefix: IPv4Network
 
-    def __init__(self, origin_address: str, port: int,
+    def __init__(self, origin_address: str, port: int = None,
                   obj_name: str = None, prefix: IPv4Network = None,
                   username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
         super().__init__(origin_address, port, obj_name, username, password, secret)
@@ -55,7 +55,7 @@ class NetworkObject(FwObject):
 class FqdnObject(FwObject):
     fqdn: str
 
-    def __init__(self, origin_address: str, port: int,
+    def __init__(self, origin_address: str, port: int = None,
                   obj_name: str = None, fqdn: str = None,
                   username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
         super().__init__(origin_address, port, obj_name, username, password, secret)
@@ -66,7 +66,7 @@ class AddrRangeObject(FwObject):
     first_addr: IPv4Address
     last_addr: IPv4Address
 
-    def __init__(self, origin_address: str, port: int,
+    def __init__(self, origin_address: str, port: int = None,
                   obj_name: str = None, first: IPv4Address = None, last: IPv4Address = None,
                   username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
         super().__init__(origin_address, port, obj_name, username, password, secret)

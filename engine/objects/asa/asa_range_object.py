@@ -10,7 +10,7 @@ class AsaRangeObject(AddrRangeObject):
     def fetch_config(self):
         if (self.name is None) and not (self.first_addr is None or self.last_addr is None):
             return self.__range_fetch()
-        elif (self.name is not None) and (self.first_addr is None and self.last_addr is None):
+        elif (self.name is not None) and (self.first_addr is None or self.last_addr is None):
             return self.__named_fetch()
         else:
             self.raw_config = ""
