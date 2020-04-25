@@ -1,15 +1,17 @@
 import sys
 from pathlib import Path
+from hosts import FDM
+
+import tests.asa_object_test as asa
+import tests.ftd_object_test as ftd
+import engine.objects.ftd.fdm_api_util as ftd_util
+
 # Locate the directory containing this file and the repository root.
 # Temporarily add these directories to the system path so that we can import
 # local files.
 here = Path(__file__).parent.absolute()
 repository_root = (here / ".." ).resolve()
 sys.path.insert(1, str(repository_root))
-
-import tests.asa_object_test as asa
-import tests.ftd_object_test as ftd
-import engine.objects.ftd.fdm_api_util as ftd_util
 
 
 OBJECT_NAME = "NOBJ"
@@ -19,15 +21,16 @@ LIST = ["192.168.0.1", "192.168.0.100"]
 FQDN = "host.example.local"
 
 # ASA section
-asa.named_object_test(OBJECT_NAME)
-asa.addressed_object_test(HOST, NETWORK, FQDN, LIST)
-asa.unknown_addressed_object_test()
+# asa.named_object_test(OBJECT_NAME)
+# asa.addressed_object_test(HOST, NETWORK, FQDN, LIST)
+# asa.unknown_addressed_object_test()
+# asa.dns_object_test(OBJECT_NAME)
+# asa.ntp_object_test(OBJECT_NAME)
+asa.acl_object_test(OBJECT_NAME)
+
+exit(0)
 
 # FTD section
-
-from hosts import FDM
-
-
 token = ftd_util.fdm_login(
     host=FDM.get("host"),
     port=FDM.get("port"),

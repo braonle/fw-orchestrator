@@ -1,5 +1,4 @@
 from enum import Enum
-from ipaddress import IPv4Address, ip_address
 
 
 class DeviceTypes(Enum):
@@ -9,8 +8,8 @@ class DeviceTypes(Enum):
 
 class Device:
     type: DeviceTypes
-    ip_addr: IPv4Address
+    ip_addr: str
 
     def __init__(self, type: DeviceTypes, address: str):
-        self.ip_addr = ip_address(address)
+        self.ip_addr = address
         self.type = type

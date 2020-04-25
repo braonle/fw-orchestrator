@@ -8,67 +8,77 @@ class ReturnCode(Enum):
     SUCCESS = 0
     OBJECT_NOT_FOUND = -1
     INVALID_FIELDS = -2
+    NOT_INITIALIZED = -3
+
+
+class ResultObject:
+    obj_name: str
+    origin_addr: IPv4Address
+    acl_list: list
+    dns: bool
+    ntp: bool
 
 
 class FwObject:
     name: str
     origin_addr: IPv4Address
-    port: int
-    raw_config: str
     username: str
     password: str
-    secret: str
 
-    def __init__(self, origin_address: str, port: int = None, obj_name: str = None,
-                 username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
+    def __init__(self, origin_address: str, obj_name: str = None, username: str = USERNAME, password: str = PASSWORD):
         self.origin_addr = ip_address(origin_address)
-        self.port = port
         self.name = obj_name
         self.username = username
         self.password = password
-        self.secret = secret
 
     def fetch_config(self) -> ReturnCode:
         pass
 
+    def dns_usage(self) -> bool:
+        pass
 
-class HostObject(FwObject):
+    def ntp_usage(self) -> bool:
+        pass
+
+    def acl_usage(self) -> list:
+        pass
+
+    def usage(self) -> ResultObject:
+        res = ResultObject()
+        res.acl_list = self.acl_usage()
+        res.dns = self.dns_usage()
+        res.ntp = self.ntp_usage()
+        res.obj_name = self.name
+        res.origin_addr = self.origin_addr
+
+        return res
+
+
+class HostObject:
     ip_addr: IPv4Address
 
-    def __init__(self, origin_address: str, port: int = None,
-                  obj_name: str = None, ip_addr: IPv4Address = None,
-                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
-        super().__init__(origin_address, port, obj_name, username, password, secret)
+    def __init__(self, ip_addr: IPv4Address = None):
         self.ip_addr = ip_addr
 
 
-class NetworkObject(FwObject):
+class NetworkObject:
     prefix: IPv4Network
 
-    def __init__(self, origin_address: str, port: int = None,
-                  obj_name: str = None, prefix: IPv4Network = None,
-                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
-        super().__init__(origin_address, port, obj_name, username, password, secret)
+    def __init__(self, prefix: IPv4Network = None):
         self.prefix = prefix
 
 
-class FqdnObject(FwObject):
+class FqdnObject:
     fqdn: str
 
-    def __init__(self, origin_address: str, port: int = None,
-                  obj_name: str = None, fqdn: str = None,
-                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
-        super().__init__(origin_address, port, obj_name, username, password, secret)
+    def __init__(self, fqdn: str = None):
         self.fqdn = fqdn
 
 
-class AddrRangeObject(FwObject):
+class AddrRangeObject:
     first_addr: IPv4Address
     last_addr: IPv4Address
 
-    def __init__(self, origin_address: str, port: int = None,
-                  obj_name: str = None, first: IPv4Address = None, last: IPv4Address = None,
-                  username: str = USERNAME, password: str = PASSWORD, secret: str = SECRET):
-        super().__init__(origin_address, port, obj_name, username, password, secret)
+    def __init__(self, first: IPv4Address = None, last: IPv4Address = None):
         self.first_addr = first
         self.last_addr = last

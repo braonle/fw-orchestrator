@@ -1,9 +1,18 @@
-from ipaddress import ip_address
+from ipaddress import ip_address, IPv4Address
 
 from engine.objects.base_objects import HostObject, ReturnCode
 from engine.objects.ftd.fdm_api_util import fdm_login, fdm_get_networks
+from engine.objects.ftd.ftd_object import FtdObject
 
-class FtdHostObject(HostObject):
+from engine.config import *
+
+
+class FtdHostObject(FtdObject, HostObject):
+
+    def __init__(self, origin_address: str, port: int = 0, ip_addr: IPv4Address = None, obj_name: str = None,
+                 username: str = USERNAME, password: str = PASSWORD):
+        FtdObject.__init__(self, origin_address, port, obj_name, username, password)
+        HostObject.__init__(self, ip_addr)
 
     def fetch_config(self) -> ReturnCode:
         if (self.name is not None) and (self.ip_addr is not None):

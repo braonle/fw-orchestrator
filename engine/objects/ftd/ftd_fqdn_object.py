@@ -1,7 +1,15 @@
 from engine.objects.base_objects import FqdnObject, ReturnCode
 from engine.objects.ftd.fdm_api_util import fdm_login, fdm_get_networks
+from engine.objects.ftd.ftd_object import FtdObject
+from engine.config import *
 
-class FtdFqdnObject(FqdnObject):
+
+class FtdFqdnObject(FtdObject, FqdnObject):
+
+    def __init__(self, origin_address: str, port: int = 0, fqdn: str = None, obj_name: str = None,
+                 username: str = USERNAME, password: str = PASSWORD):
+        FtdObject.__init__(self, origin_address, port, obj_name, username, password)
+        FqdnObject.__init__(self, fqdn)
 
     def fetch_config(self) -> ReturnCode:
         if (self.name is not None) and (self.fqdn is not None):

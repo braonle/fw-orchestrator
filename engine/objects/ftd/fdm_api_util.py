@@ -2,12 +2,16 @@
 
 import requests
 from requests import HTTPError
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from pprint import pformat
-from ipaddress import IPv4Address, IPv4Network, ip_network
+import os
 
 # Disable insecure request warnings
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+if os.name == 'nt':
+    from requests.packages.urllib3.exceptions import InsecureRequestWarning
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+elif os.name == 'posix':
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def fdm_login(
