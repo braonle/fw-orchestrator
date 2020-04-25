@@ -1,0 +1,20 @@
+<html>
+    <head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
+        crossorigin="anonymous">
+          <h2>FQDN</h2>
+        </head>
+        <body>
+            <form action="/fqdn" method="POST", method='GET'>
+            <p>Domain name &nbsp<input type="text" placeholder="Domain name" name="fqdn" value="{{ fqdn }}"></p>
+
+            <input type="submit" class="btn btn-primary" value="Submit">
+            <p></p>
+
+            {% for ftd_list_element in ftd_list %}
+            <p>{{ ftd_list_element }}</p>
+        {% endfor %}
+
+            </form>
+        </body>
+</html>

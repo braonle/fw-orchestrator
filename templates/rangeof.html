@@ -1,0 +1,22 @@
+<html>
+    <head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
+        crossorigin="anonymous">
+          <h2>IP range</h2>
+        </head>
+
+
+        <body>
+            <form action="/rangeof" method="POST", method='GET'>
+            <p>First address: <input type="text" placeholder="First address" name="values" value="{{ first }}"></p>
+            <p>Last address: <input type="text" placeholder="Last address" name="values" value="{{ last }}"></p>
+            <input type="submit" class="btn btn-primary" value="Submit">
+            <p></p>
+            
+            {% for ftd_list_element in ftd_list %}
+            <p>{{ ftd_list_element }}</p>
+        {% endfor %}
+
+            </form>
+        </body>
+</html>
