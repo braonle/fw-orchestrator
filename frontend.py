@@ -30,6 +30,7 @@ def host():
 
     device_list = []
     result_list = []
+    output_list=[]
 
     if request.method == 'POST':
         ip_addr = request.form.get('ip_addr')
@@ -56,13 +57,14 @@ def host():
 
         for x in device_list:
             x.fetch_config()
-            result_list.append(x.usage())
-            print(repr(x.usage()))
+            obj = x.usage()
+            result_list.append(obj)
 
+            output = 'Name: ' + str(obj.obj_name) +'\n'+ ' | Origin Address: '+ str(obj.origin_addr)+ '\n'+' | ACL: '+ str(obj.acl_list).strip('[]')+'\n'+' | DNS: '+ str(obj.dns)+ '\n' +' | NTP: ' + str(obj.ntp)+'\n\n'
+            output_list.append(output)
+            print(output)
 
-            # obj = AsaHostObject(origin_address=x.ip_addr, ip_addr=ip_address(ip_addr))
-
-    return render_template("host.html", ip_addr=ip_addr, result_list=result_list)
+    return render_template("host.html", ip_addr=ip_addr, name=name, output_list=output_list)
 
 
 
@@ -71,6 +73,7 @@ def fqdn():
     fqdn_str=''
     device_list= []
     result_list=[]
+    output_list=[]
     if request.method == "POST":
         fqdn_str = request.form.get('fqdn_str')
 
@@ -85,10 +88,14 @@ def fqdn():
 
         for x in device_list:
             x.fetch_config()
-            result_list.append(x.usage())
-            print(repr(x.usage()))
+            obj = x.usage()
+            result_list.append(obj)
+
+            output = 'Name: ' + str(obj.obj_name) +'\n'+ ' | Origin Address: '+ str(obj.origin_addr)+ '\n'+' | ACL: '+ str(obj.acl_list).strip('[]')+'\n'+' | DNS: '+ str(obj.dns)+ '\n' +' | NTP: ' + str(obj.ntp)+'\n\n'
+            output_list.append(output)
+            print(output)
         
-    return render_template('fqdn.html', fqdn_str=fqdn_str, result_list=result_list) 
+    return render_template('fqdn.html', fqdn_str=fqdn_str, output_list=output_list) 
 
 
 @app.route('/rangeof', methods=['GET','POST'])
@@ -97,6 +104,8 @@ def rangeof():
     last = ''
     result_list = []
     device_list = []
+    output_list=[]
+
     if request.method == "POST":
         lst = request.form.getlist('values')
         first = str(lst[0])
@@ -114,10 +123,14 @@ def rangeof():
 
         for x in device_list:
             x.fetch_config()
-            result_list.append(x.usage())
-            print(repr(x.usage()))
+            obj = x.usage()
+            result_list.append(obj)
 
-    return render_template('rangeof.html', first=first, last=last, result_list=result_list) 
+            output = 'Name: ' + str(obj.obj_name) +'\n'+ ' | Origin Address: '+ str(obj.origin_addr)+ '\n'+' | ACL: '+ str(obj.acl_list).strip('[]')+'\n'+' | DNS: '+ str(obj.dns)+ '\n' +' | NTP: ' + str(obj.ntp)+'\n\n'
+            output_list.append(output)
+            print(output)
+
+    return render_template('rangeof.html', first=first, last=last, output_list=output_list) 
 
 
 @app.route('/network', methods=['GET', 'POST'])
@@ -125,6 +138,8 @@ def network():
     result_list = []
     device_list = []
     prefix = ''
+    output_list=[]
+
     if request.method == "POST":
         prefix = request.form.get('prefix')
         
@@ -139,10 +154,14 @@ def network():
 
         for x in device_list:
             x.fetch_config()
-            result_list.append(x.usage())
-            print(repr(x.usage()))
+            obj = x.usage()
+            result_list.append(obj)
 
-    return render_template('network.html', prefix=prefix, result_list=result_list)
+            output = 'Name: ' + str(obj.obj_name) +'\n'+ ' | Origin Address: '+ str(obj.origin_addr)+ '\n'+' | ACL: '+ str(obj.acl_list).strip('[]')+'\n'+' | DNS: '+ str(obj.dns)+ '\n' +' | NTP: ' + str(obj.ntp)+'\n\n'
+            output_list.append(output)
+            print(output)
+
+    return render_template('network.html', prefix=prefix, output_list=output_list)
        
 
 app.run()
