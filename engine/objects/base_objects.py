@@ -18,6 +18,9 @@ class ResultObject:
     dns: bool
     ntp: bool
 
+    def __repr__(self):
+        return str(self.obj_name)
+        
 
 class FwObject:
     name: str
@@ -52,6 +55,7 @@ class FwObject:
         res.origin_addr = self.origin_addr
 
         return res
+
 
 
 class HostObject:

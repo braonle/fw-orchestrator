@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, json
 from ipaddress import ip_address, ip_network
 from engine.objects.ftd.ftd_host_object import FtdHostObject
 from engine.objects.ftd.ftd_fqdn_object import FtdFqdnObject
@@ -26,12 +26,24 @@ def index():
 @app.route('/host', methods=['GET', 'POST'])
 def host():
     ip_addr = ''
+    name = ''
 
     device_list = []
     result_list = []
 
     if request.method == 'POST':
         ip_addr = request.form.get('ip_addr')
+        name = request.form.get('name')
+
+        if len(name) != 0:
+            for x in HOSTS:
+                if x.type == DeviceTypes.ASA:
+                    device_list.append(AsaHostObject(origin_address=x.ip_addr, obj_name=name))
+                elif x.type == DeviceTypes.FTD:
+                    device_list.append(FtdHostObject(origin_address=x.ip_addr, ip_addr=ip_address(ip_addr)))
+        else:
+            name = 'Empty hostname'
+
 
         if len(ip_addr) != 0:
             for x in HOSTS:
@@ -40,11 +52,12 @@ def host():
                 elif x.type == DeviceTypes.FTD:
                     device_list.append(FtdHostObject(origin_address=x.ip_addr, ip_addr=ip_address(ip_addr)))
         else:
-            return None
+            ip_addr = 'Empty address'
 
         for x in device_list:
             x.fetch_config()
-            # result_list.append(x.usage())
+            result_list.append(x.usage())
+            print(repr(x.usage()))
 
             # obj = AsaHostObject(origin_address=x.ip_addr, ip_addr=ip_address(ip_addr))
 
@@ -53,26 +66,29 @@ def host():
 
 @app.route('/fqdn', methods=['GET', 'POST'])
 def fqdn():
-    
+    fqdn_str=''
     device_list= []
     result_list=[]
     if request.method == "POST":
-        fqdn_str = request.form.get('fqdn')
+        fqdn_str = request.form.get('fqdn_str')
 
-        if len(fqdn) != 0:
+        if len(fqdn_str) != 0:
             for x in HOSTS:
                 if x.type == DeviceTypes.ASA:
                     device_list.append(AsaFqdnObject(origin_address=x.ip_addr, fqdn=fqdn_str))
                 elif x.type == DeviceTypes.FTD:
                     device_list.append(FtdFqdnObject(origin_address=x.ip_addr, fqdn=fqdn_str))
         else:
-            return None
+            fqdn_str='Empty field'
 
         for x in device_list:
             x.fetch_config()
             # result_list.append(x.usage())
         
-    return render_template('fqdn.html', result_list=result_list) 
+            result_list.append(x.usage())
+            print(repr(x.usage()))
+        
+    return render_template('fqdn.html', fqdn_str=fqdn_str, result_list=result_list) 
 
 
 @app.route('/rangeof', methods=['GET','POST'])
@@ -93,11 +109,13 @@ def rangeof():
                 elif x.type == DeviceTypes.FTD:
                     device_list.append(FtdRangeObject(origin_address=x.ip_addr, first=ip_address(lst[0]), last=ip_address(lst[1])))
         else:
-            return None
+            first = 'Please fill out both fields'
+            last = 'Please fill out both fields'
 
         for x in device_list:
             x.fetch_config()
-            # result_list.append(x.usage())
+            result_list.append(x.usage())
+            print(repr(x.usage()))
 
     return render_template('rangeof.html', first=first, last=last, result_list=result_list) 
 
@@ -117,11 +135,12 @@ def network():
                 elif x.type == DeviceTypes.FTD:
                     device_list.append(FtdNetworkObject(origin_address=x.ip_addr, prefix=ip_network(prefix)))
         else:
-            return None
+            prefix = 'Empty field'
 
         for x in device_list:
             x.fetch_config()
-            # result_list.append(x.usage())
+            result_list.append(x.usage())
+            print(repr(x.usage()))
 
     return render_template('network.html', prefix=prefix, result_list=result_list)
        
