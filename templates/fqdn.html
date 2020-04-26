@@ -6,13 +6,13 @@
         </head>
         <body>
             <form action="/fqdn" method="POST", method='GET'>
-            <p>Domain name &nbsp<input type="text" placeholder="Domain name" name="fqdn" value="{{ fqdn }}"></p>
+            <p>Domain name &nbsp<input type="text" placeholder="Domain name" name="fqdn_str" value="{{ fqdn_str }}"></p>
 
             <input type="submit" class="btn btn-primary" value="Submit">
             <p></p>
-
-            {% for ftd_list_element in ftd_list %}
-            <p>{{ ftd_list_element }}</p>
+            
+            {% for result_list_element in result_list %}
+            <p>{{ result_list_element }}</p>
         {% endfor %}
 
             </form>
