@@ -1,7 +1,8 @@
 from ipaddress import ip_address, IPv4Address
 
 from engine.objects.base_objects import HostObject, ReturnCode
-from engine.objects.ftd.fdm_api_util import fdm_login, fdm_get_networks
+from engine.objects.ftd.fdm_api_util import (fdm_login, fdm_get_networks,
+    fdm_get_ntp, fdm_get_dns_server_groups)
 from engine.objects.ftd.ftd_object import FtdObject
 
 from engine.config import *
@@ -37,6 +38,7 @@ class FtdHostObject(FtdObject, HostObject):
             if obj['subType'] == "HOST":
                 if obj['name'] == self.name:
                     self.ip_addr = ip_address(obj['value'])
+                    self.id = obj['id']
                     return ReturnCode.SUCCESS
 
         return ReturnCode.OBJECT_NOT_FOUND
@@ -54,6 +56,46 @@ class FtdHostObject(FtdObject, HostObject):
             if obj['subType'] == "HOST":
                 if obj['value'] == str(self.ip_addr):
                     self.name = obj['name']
+                    self.id = obj['id']
                     return ReturnCode.SUCCESS
 
         return ReturnCode.OBJECT_NOT_FOUND
+
+    def dns_usage(self) -> bool:
+        if self.ip_addr is None:
+            return False
+
+        token = fdm_login(host=self.origin_addr,
+                          port=self.port,
+                          username=self.username,
+                          password=self.password)
+        dns = fdm_get_dns_server_groups(token,
+                          host=self.origin_addr,
+                          port=self.port)
+
+        for i in dns['items']:
+            for dns_server in i['dnsServers']:
+                if dns_server['ipAddress'] == str(self.ip_addr):
+                    return True
+
+        return False
+
+    def ntp_usage(self) -> bool:
+        if self.ip_addr is None:
+            return False
+
+        token = fdm_login(host=self.origin_addr,
+                          port=self.port,
+                          username=self.username,
+                          password=self.password)
+        ntp = fdm_get_ntp(token,
+                          host=self.origin_addr,
+                          port=self.port)
+
+        for i in ntp['items']:
+            for ntp_server in i['ntpServers']:
+                if ntp_server == str(self.ip_addr):
+                    # if i['enabled']:
+                    return True
+
+        return False

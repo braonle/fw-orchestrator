@@ -1,5 +1,5 @@
 from engine.objects.base_objects import FqdnObject, ReturnCode
-from engine.objects.ftd.fdm_api_util import fdm_login, fdm_get_networks
+from engine.objects.ftd.fdm_api_util import fdm_login, fdm_get_networks, fdm_get_ntp
 from engine.objects.ftd.ftd_object import FtdObject
 from engine.config import *
 
@@ -34,6 +34,7 @@ class FtdFqdnObject(FtdObject, FqdnObject):
             if obj['subType'] == "FQDN":
                 if obj['name'] == self.name:
                     self.fqdn = obj['value']
+                    self.id = obj['id']
                     return ReturnCode.SUCCESS
 
         return ReturnCode.OBJECT_NOT_FOUND
@@ -51,6 +52,27 @@ class FtdFqdnObject(FtdObject, FqdnObject):
             if obj['subType'] == "FQDN":
                 if obj['value'] == str(self.fqdn):
                     self.name = obj['name']
+                    self.id = obj['id']
                     return ReturnCode.SUCCESS
 
         return ReturnCode.OBJECT_NOT_FOUND
+
+    def ntp_usage(self) -> bool:
+            if self.fqdn is None:
+                return False
+
+            token = fdm_login(host=self.origin_addr,
+                              port=self.port,
+                              username=self.username,
+                              password=self.password)
+            ntp = fdm_get_ntp(token,
+                              host=self.origin_addr,
+                              port=self.port)
+
+            for i in ntp['items']:
+                for ntp_server in i['ntpServers']:
+                    if ntp_server == self.fqdn:
+                        # if i['enabled']:
+                        return True
+
+            return False
