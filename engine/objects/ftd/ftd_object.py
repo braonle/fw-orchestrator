@@ -42,15 +42,9 @@ class FtdObject(FwObject):
             for accessrule in accessrules['items']:
                 for src in accessrule['sourceNetworks']:
                     if src['id'] == self.id:
-                        for dest in accessrule['destinationNetworks']:
-                            line = f"{accesspolicy['name']}: {accessrule['name']}: " \
-                                   f"{accessrule['ruleAction']} {src['name']} -> {dest['name']}"
-                            lst.append(line)
+                        lst.append(f"{accesspolicy['name']}: {accessrule['name']}")
                 for dest in accessrule['destinationNetworks']:
                     if dest['id'] == self.id:
-                        for src in accessrule['sourceNetworks']:
-                            line = f"{accesspolicy['name']}: {accessrule['name']}: " \
-                                   f"{accessrule['ruleAction']} {src['name']} -> {dest['name']}"
-                            lst.append(line)
+                        lst.append(f"{accesspolicy['name']}: {accessrule['name']}")
 
         return lst
