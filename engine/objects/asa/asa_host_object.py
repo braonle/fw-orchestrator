@@ -56,3 +56,9 @@ class AsaHostObject(AsaObject, HostObject):
 
         command = "sho run ntp | i " + str(self.ip_addr)
         return len(self.cli_command(command)) != 0
+
+    def acl_usage(self) -> list:
+        lst = super().acl_usage()
+        lst = lst + super()._acl_usage_string(str(self.ip_addr))
+
+        return list(set(lst))

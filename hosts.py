@@ -10,6 +10,6 @@ FDM = {
 }
 
 HOSTS = [
-    Device(DeviceTypes.ASA, "192.168.2.100")#,
-    #Device(DeviceTypes.FTD, "192.168.1.100")
+    Device(DeviceTypes.ASA, "192.168.2.100"),
+    Device(DeviceTypes.FTD, "192.168.1.100")
 ]

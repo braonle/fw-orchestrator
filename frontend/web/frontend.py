@@ -14,8 +14,20 @@ from hosts import HOSTS
 
 app = Flask(__name__)
 
-FTD_ADDRESS = "10.62.18.27"
-ASA_ADDRESS = "10.62.18.24"
+
+def get_object_usage(device_list: list) -> list:
+    output_list = []
+
+    for x in device_list:
+        x.fetch_config()
+        obj = x.usage()
+
+        output = 'Name: ' + str(obj.obj_name) + '<br/>' + 'Origin Address: ' + str(obj.origin_addr) + \
+                 '<br/>' + 'ACL: ' + str(obj.acl_list).strip('[]') + '<br/>' + 'DNS: ' + str(obj.dns) + \
+                 '<br/>' + 'NTP: ' + str(obj.ntp) + '<br/><br/>'
+        output_list.append(output)
+
+    return output_list
 
 
 @app.route('/')
@@ -25,12 +37,9 @@ def index():
 
 @app.route('/host', methods=['GET', 'POST'])
 def host():
-    ip_addr = ''
-    name = ''
-
     device_list = []
-    result_list = []
-    output_list=[]
+    output_list = []
+    ip_addr = name = ''
 
     if request.method == 'POST':
         ip_addr = request.form.get('ip_addr')
@@ -54,26 +63,17 @@ def host():
         else:
             ip_addr = 'Empty address'
 
-        for x in device_list:
-            x.fetch_config()
-            obj = x.usage()
-            result_list.append(obj)
-
-            output = 'Name: ' + str(obj.obj_name) + '\n' + ' | Origin Address: ' + str(obj.origin_addr) + \
-                     '\n' + ' | ACL: ' + str(obj.acl_list).strip('[]') + '\n' + ' | DNS: ' + str(obj.dns) + \
-                     '\n' + ' | NTP: ' + str(obj.ntp) + '\n\n'
-            output_list.append(output)
-            #print(output)
+        output_list = get_object_usage(device_list)
 
     return render_template("host.html", ip_addr=ip_addr, name=name, output_list=output_list)
 
 
 @app.route('/fqdn', methods=['GET', 'POST'])
 def fqdn():
-    fqdn_str=''
-    device_list= []
-    result_list=[]
-    output_list=[]
+    fqdn_str = ''
+    device_list = []
+    output_list = []
+
     if request.method == "POST":
         fqdn_str = request.form.get('fqdn_str')
 
@@ -84,29 +84,18 @@ def fqdn():
                 elif x.type == DeviceTypes.FTD:
                     device_list.append(FtdFqdnObject(origin_address=x.ip_addr, fqdn=fqdn_str))
         else:
-            fqdn_str='Empty field'
+            fqdn_str = 'Empty field'
 
-        for x in device_list:
-            x.fetch_config()
-            obj = x.usage()
-            result_list.append(obj)
-
-            output = 'Name: ' + str(obj.obj_name) + '\n' + ' | Origin Address: ' + str(obj.origin_addr) + \
-                     '\n' + ' | ACL: ' + str(obj.acl_list).strip('[]') + '\n' + ' | DNS: ' + str(obj.dns) + \
-                     '\n' + ' | NTP: ' + str(obj.ntp) + '\n\n'
-            output_list.append(output)
-            #print(output)
+        output_list = get_object_usage(device_list)
         
     return render_template('fqdn.html', fqdn_str=fqdn_str, output_list=output_list) 
 
 
 @app.route('/rangeof', methods=['GET','POST'])
 def rangeof():
-    first = ''
-    last = ''
-    result_list = []
     device_list = []
-    output_list=[]
+    output_list = []
+    first = last = ''
 
     if request.method == "POST":
         lst = request.form.getlist('values')
@@ -123,26 +112,16 @@ def rangeof():
             first = 'Please fill out both fields'
             last = 'Please fill out both fields'
 
-        for x in device_list:
-            x.fetch_config()
-            obj = x.usage()
-            result_list.append(obj)
-
-            output = 'Name: ' + str(obj.obj_name) + '\n' + ' | Origin Address: ' + str(obj.origin_addr) + \
-                     '\n' + ' | ACL: ' + str(obj.acl_list).strip('[]') + '\n' + ' | DNS: ' + str(obj.dns) + \
-                     '\n' + ' | NTP: ' + str(obj.ntp) + '\n\n'
-            output_list.append(output)
-            # print(output)
+        output_list = get_object_usage(device_list)
 
     return render_template('rangeof.html', first=first, last=last, output_list=output_list) 
 
 
 @app.route('/network', methods=['GET', 'POST'])
 def network():
-    result_list = []
     device_list = []
+    output_list = []
     prefix = ''
-    output_list =  []
 
     if request.method == "POST":
         prefix = request.form.get('prefix')
@@ -156,18 +135,6 @@ def network():
         else:
             prefix = 'Empty field'
 
-        for x in device_list:
-            x.fetch_config()
-            obj = x.usage()
-            result_list.append(obj)
-
-            output = 'Name: ' + str(obj.obj_name) + '\n' + ' | Origin Address: ' + str(obj.origin_addr) + \
-                     '\n' + ' | ACL: ' + str(obj.acl_list).strip('[]') + '\n' + ' | DNS: ' + str(obj.dns) + \
-                     '\n' + ' | NTP: ' + str(obj.ntp) + '\n\n'
-            output_list.append(output)
-            #print(output)
+        output_list = get_object_usage(device_list)
 
     return render_template('network.html', prefix=prefix, output_list=output_list)
-       
-
-app.run()

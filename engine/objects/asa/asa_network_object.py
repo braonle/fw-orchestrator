@@ -42,3 +42,9 @@ class AsaNetworkObject(AsaObject, NetworkObject):
         self.name = re.search("object network (.+) subnet", self.raw_config).group(1)
         return ReturnCode.SUCCESS
 
+    def acl_usage(self) -> list:
+        lst = super().acl_usage()
+        lst = lst + super()._acl_usage_string(str(self.prefix.network_address) + " " + str(self.prefix.netmask))
+
+        return list(set(lst))
+

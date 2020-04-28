@@ -42,11 +42,14 @@ class AsaObject(FwObject):
         if self.name is None:
             return []
 
-        command = "sho run access-list | i " + self.name
+        return self._acl_usage_string(self.name)
+
+    def _acl_usage_string(self, command_key) -> list:
+        command = "sho run access-list | i " + command_key
         ace = self.cli_command(command).splitlines()
         lst = []
 
         for x in ace:
             lst.append(re.search("access-list (\w+)", x).group(1))
 
-        return lst
+        return list(set(lst))

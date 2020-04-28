@@ -16,8 +16,12 @@
             
 
             {% for output_list_element in output_list %}
-            <p>{{ output_list_element }}</p></br>
-        {% endfor %}
+            <p>
+                {% autoescape false %}
+                {{ output_list_element }}
+                {% endautoescape %}
+            </p>
+            {% endfor %}
 
             </form>
         </body>

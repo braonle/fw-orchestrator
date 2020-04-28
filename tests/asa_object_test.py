@@ -24,7 +24,9 @@ ntp server 8.8.8.8
     
 access-list ACL extended permit ip object NOBJ-HOST any 
 access-list ACL1 extended permit ip object NOBJ-HOST any 
-access-list ACL1 extended permit ip object NOBJ-FQDN any 
+access-list ACL1 extended permit ip object NOBJ-FQDN any
+access-list ACL2 extended permit ip any 8.8.8.8 255.255.255.255 
+access-list ACL3 extended permit ip 192.168.12.0 255.255.255.0 any 
 
 '''
 
