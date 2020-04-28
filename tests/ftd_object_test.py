@@ -134,7 +134,7 @@ def unknown_addressed_object_test():
     print(obj.fetch_config() == ReturnCode.OBJECT_NOT_FOUND)
     print()
 
-    print("Test FTD network addressed object")
+    print("Test FTD unknown network addressed object")
     obj = FtdNetworkObject(
         origin_address=FDM.get("host"),
         port=FDM.get("port"),
@@ -144,7 +144,7 @@ def unknown_addressed_object_test():
     print(obj.fetch_config() == ReturnCode.OBJECT_NOT_FOUND)
     print()
 
-    print("Test FTD FQDN addressed object")
+    print("Test FTD unknown FQDN addressed object")
     obj = FtdFqdnObject(
         origin_address=FDM.get("host"),
         port=FDM.get("port"),
@@ -154,7 +154,7 @@ def unknown_addressed_object_test():
     print(obj.fetch_config() == ReturnCode.OBJECT_NOT_FOUND)
     print()
 
-    print("Test FTD range addressed object")
+    print("Test FTD unknown range addressed object")
     obj = FtdRangeObject(
         origin_address=FDM.get("host"),
         port=FDM.get("port"),
@@ -163,4 +163,142 @@ def unknown_addressed_object_test():
         first=ip_address(lst[0]),
         last=ip_address(lst[1]))
     print(obj.fetch_config() == ReturnCode.OBJECT_NOT_FOUND)
+    print()
+
+
+def dns_object_test(name: str):
+    print("Test FTD host DNS object:")
+    obj = FtdHostObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-DNS-HOST")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.dns_usage()))
+    print()
+
+    print("Test FTD network DNS object:")
+    obj = FtdNetworkObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-NETWORK")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.dns_usage()))
+    print()
+
+    print("Test FTD FQDN DNS object:")
+    obj = FtdFqdnObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-FQDN")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.dns_usage()))
+    print()
+
+    print("Test FTD range DNS object:")
+    obj = FtdRangeObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-RANGE")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.dns_usage()))
+    print()
+
+
+def ntp_object_test(name: str):
+    print("Test FTD host NTP object:")
+    obj = FtdHostObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-HOST")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.ntp_usage()))
+    print()
+
+    print("Test FTD network NTP object:")
+    obj = FtdNetworkObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-NETWORK")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.ntp_usage()))
+    print()
+
+    print("Test FTD FQDN NTP object:")
+    obj = FtdFqdnObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-FQDN")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.ntp_usage()))
+    print()
+
+    print("Test FTD range NTP object:")
+    obj = FtdRangeObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-RANGE")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.ntp_usage()))
+    print()
+
+
+def acl_object_test(name: str):
+    print("Test FTD host ACL object:")
+    obj = FtdHostObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-HOST")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.acl_usage()))
+    print()
+
+    print("Test FTD network ACL object:")
+    obj = FtdNetworkObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-NETWORK")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.acl_usage()))
+    print()
+
+    print("Test FTD FQDN ACL object:")
+    obj = FtdFqdnObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-FQDN")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.acl_usage()))
+    print()
+
+    print("Test FTD range ACL object:")
+    obj = FtdRangeObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-RANGE")
+    obj.fetch_config()
+    print(obj.name + " -> " + str(obj.acl_usage()))
     print()

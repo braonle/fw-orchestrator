@@ -120,3 +120,96 @@ def fdm_create_network(
     # response.raise_for_status()
 
     return response.json()
+
+
+def fdm_get_ntp(
+    access_token,
+    host,
+    port,
+):
+    """Get the list of all NTP objects in FDM."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/devicesettings/default/ntp",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+
+def fdm_get_dns_server_groups(
+    access_token,
+    host,
+    port,
+):
+    """Get the list of all DNS server groups in FDM."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/object/dnsservergroups",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+
+def fdm_get_access_policies(
+    access_token,
+    host,
+    port,
+):
+    """Get the list of all access policies in FDM."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/policy/accesspolicies",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+
+def fdm_get_access_rules(
+    access_token,
+    host,
+    port,
+    access_policy_id
+):
+    """Get the list of the access rules of an access policy."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/policy/accesspolicies/{access_policy_id}/accessrules",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()

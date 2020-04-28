@@ -47,6 +47,7 @@ class FtdRangeObject(FtdObject, AddrRangeObject):
                     last_addr = re.search(self.range_regex, obj['value']).group("last_addr")
                     self.first_addr = ip_address(first_addr)
                     self.last_addr = ip_address(last_addr)
+                    self.id = obj['id']
                     return ReturnCode.SUCCESS
 
         return ReturnCode.OBJECT_NOT_FOUND
@@ -67,6 +68,7 @@ class FtdRangeObject(FtdObject, AddrRangeObject):
                 if ip_address(first_addr) == self.first_addr \
                     and ip_address(last_addr) == self.last_addr:
                     self.name = obj['name']
+                    self.id = obj['id']
                     return ReturnCode.SUCCESS
 
         return ReturnCode.OBJECT_NOT_FOUND

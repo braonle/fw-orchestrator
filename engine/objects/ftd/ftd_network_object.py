@@ -36,6 +36,7 @@ class FtdNetworkObject(FtdObject, NetworkObject):
             if obj['subType'] == "NETWORK":
                 if obj['name'] == self.name:
                     self.prefix = ip_network(obj['value'])
+                    self.id = obj['id']
                     return ReturnCode.SUCCESS
 
         return ReturnCode.OBJECT_NOT_FOUND
@@ -53,6 +54,7 @@ class FtdNetworkObject(FtdObject, NetworkObject):
             if obj['subType'] == "NETWORK":
                 if obj['value'] == str(self.prefix):
                     self.name = obj['name']
+                    self.id = obj['id']
                     return ReturnCode.SUCCESS
 
         return ReturnCode.OBJECT_NOT_FOUND

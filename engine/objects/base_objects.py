@@ -18,8 +18,8 @@ class ResultObject:
     dns: bool
     ntp: bool
 
-    def __repr__(self):
-        return str(self.obj_name)
+   # def __str__(self):
+     #  return str(self.)
         
 
 class FwObject:
