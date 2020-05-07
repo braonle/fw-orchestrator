@@ -15,6 +15,13 @@ from hosts import HOSTS
 app = Flask(__name__)
 
 
+def list_to_str(l : list) -> str:
+    res = ''
+    for x in l:
+        res = res + " " + str(x)
+    return res
+
+
 def get_object_usage(device_list: list) -> list:
     output_list = []
 
@@ -22,9 +29,11 @@ def get_object_usage(device_list: list) -> list:
         x.fetch_config()
         obj = x.usage()
 
-        output = 'Name: ' + str(obj.obj_name) + '<br/>' + 'Origin Address: ' + str(obj.origin_addr) + \
-                 '<br/>' + 'ACL: ' + str(obj.acl_list).strip('[]') + '<br/>' + 'DNS: ' + str(obj.dns) + \
-                 '<br/>' + 'NTP: ' + str(obj.ntp) + '<br/><br/>'
+        output = 'Name: ' + str(obj.obj_name) + '<br/>' + \
+                 'Origin Address: ' + str(obj.origin_addr) + '<br/>' + \
+                 'ACL: ' + list_to_str(obj.acl_list) + '<br/>' + \
+                 'DNS: ' + str(obj.dns) + '<br/>' + \
+                 'NTP: ' + str(obj.ntp) + '<br/><br/>'
         output_list.append(output)
 
     return output_list

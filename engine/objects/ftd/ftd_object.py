@@ -1,4 +1,6 @@
-from engine.objects.base_objects import FwObject
+from typing import List
+
+from engine.objects.base_objects import FwObject, AclEntry
 from engine.objects.ftd.fdm_api_util import (fdm_login, fdm_get_access_policies,
     fdm_get_access_rules)
 
@@ -21,7 +23,7 @@ class FtdObject(FwObject):
     def ntp_usage(self) -> bool:
         return False
 
-    def acl_usage(self) -> list:
+    def acl_usage(self) -> List[AclEntry]:
         if self.id is None:
             return []
 
@@ -47,4 +49,12 @@ class FtdObject(FwObject):
                     if dest['id'] == self.id:
                         lst.append(f"{accesspolicy['name']}: {accessrule['name']}")
 
-        return lst
+        res = []
+
+        for x in lst:
+            obj = AclEntry()
+            obj.acl_name = x
+            obj.hit_count = 0
+            res.append(obj)
+
+        return res

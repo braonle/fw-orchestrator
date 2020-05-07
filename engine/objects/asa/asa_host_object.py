@@ -1,7 +1,8 @@
 from ipaddress import ip_address, IPv4Address
 import re
+from typing import List
 
-from engine.objects.base_objects import HostObject, ReturnCode
+from engine.objects.base_objects import HostObject, ReturnCode, AclEntry
 from engine.objects.asa.asa_object import AsaObject
 from engine.config import *
 
@@ -54,11 +55,23 @@ class AsaHostObject(AsaObject, HostObject):
         if self.ip_addr is None:
             return False
 
-        command = "sho run ntp | i " + str(self.ip_addr)
+        command = "sho ntp ass | i \*.*" + str(self.ip_addr)
         return len(self.cli_command(command)) != 0
 
-    def acl_usage(self) -> list:
-        lst = super().acl_usage()
-        lst = lst + super()._acl_usage_string(str(self.ip_addr))
+    def acl_usage(self) -> List[AclEntry]:
+        lst = super()._acl_usage_string(self.name)
+        lst = lst.union(super()._acl_usage_string(str(self.ip_addr)))
+        res = []
 
-        return list(set(lst))
+        for x in lst:
+            entries = self.cli_command("sho access-l " + x + " " + str(self.ip_addr) + " | i " + str(self.ip_addr)).splitlines()
+            hitcnt = 0
+            for s in entries:
+                hitcnt += int(re.search("\(hitcnt=([0-9]+)\)", s).group(1))
+
+            acl = AclEntry()
+            acl.acl_name = x
+            acl.hit_count = hitcnt
+            res.append(acl)
+
+        return res

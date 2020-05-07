@@ -1,7 +1,10 @@
 import re
+import string
+from tokenize import String
+from typing import List, Set
 
 from netmiko import ConnectHandler
-from engine.objects.base_objects import FwObject
+from engine.objects.base_objects import FwObject, AclEntry
 from engine.config import *
 
 
@@ -38,13 +41,10 @@ class AsaObject(FwObject):
     def ntp_usage(self) -> bool:
         return False
 
-    def acl_usage(self) -> list:
-        if self.name is None:
-            return []
+    def acl_usage(self) -> List[AclEntry]:
+        return []
 
-        return self._acl_usage_string(self.name)
-
-    def _acl_usage_string(self, command_key) -> list:
+    def _acl_usage_string(self, command_key) -> Set[str]:
         command = "sho run access-list | i " + command_key
         ace = self.cli_command(command).splitlines()
         lst = []
@@ -52,4 +52,10 @@ class AsaObject(FwObject):
         for x in ace:
             lst.append(re.search("access-list (\w+)", x).group(1))
 
-        return list(set(lst))
+        return set(lst)
+
+    def hostname(self) -> str:
+        return self.cli_command("sho hostname").split()[1]
+
+    def systime(self) -> str:
+        return self.cli_command("sho clock")

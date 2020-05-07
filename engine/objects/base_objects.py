@@ -1,5 +1,6 @@
 from ipaddress import IPv4Address, IPv4Network, ip_address
 from enum import Enum
+from typing import List
 
 from engine.config import *
 
@@ -11,16 +12,21 @@ class ReturnCode(Enum):
     NOT_INITIALIZED = -3
 
 
+class AclEntry:
+    acl_name: str
+    hit_count: int
+
+    def __str__(self):
+        return self.acl_name + " hit " + str(self.hit_count)
+
+
 class ResultObject:
     obj_name: str
     origin_addr: IPv4Address
-    acl_list: list
+    acl_list: List[AclEntry]
     dns: bool
     ntp: bool
 
-   # def __str__(self):
-     #  return str(self.)
-        
 
 class FwObject:
     name: str
@@ -43,7 +49,7 @@ class FwObject:
     def ntp_usage(self) -> bool:
         pass
 
-    def acl_usage(self) -> list:
+    def acl_usage(self) -> List[AclEntry]:
         pass
 
     def usage(self) -> ResultObject:
@@ -56,6 +62,11 @@ class FwObject:
 
         return res
 
+    def hostname(self) -> str:
+        pass
+
+    def systime(self) -> str:
+        pass
 
 
 class HostObject:

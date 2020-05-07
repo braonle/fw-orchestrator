@@ -1,8 +1,10 @@
 import re
 
 from ipaddress import ip_network, IPv4Network
+from typing import List
+
 from engine.objects.asa.asa_object import AsaObject
-from engine.objects.base_objects import NetworkObject, ReturnCode
+from engine.objects.base_objects import NetworkObject, ReturnCode, AclEntry
 from engine.config import *
 
 
@@ -42,9 +44,21 @@ class AsaNetworkObject(AsaObject, NetworkObject):
         self.name = re.search("object network (.+) subnet", self.raw_config).group(1)
         return ReturnCode.SUCCESS
 
-    def acl_usage(self) -> list:
-        lst = super().acl_usage()
-        lst = lst + super()._acl_usage_string(str(self.prefix.network_address) + " " + str(self.prefix.netmask))
+    def acl_usage(self) -> List[AclEntry]:
+        lst = super()._acl_usage_string(self.name)
+        lst = lst.union(super()._acl_usage_string(str(self.prefix.network_address)))
+        res = []
 
-        return list(set(lst))
+        for x in lst:
+            entries = self.cli_command("sho access-l " + x + " " + str(self.prefix.network_address) + " | i " + str(self.prefix.network_address)).splitlines()
+            hitcnt = 0
+            for s in entries:
+                hitcnt += int(re.search("\(hitcnt=([0-9]+)\)", s).group(1))
+
+            acl = AclEntry()
+            acl.acl_name = x
+            acl.hit_count = hitcnt
+            res.append(acl)
+
+        return res
 
