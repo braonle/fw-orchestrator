@@ -16,6 +16,7 @@ class FtdObject(FwObject):
                  username: str = USERNAME, password: str = PASSWORD,  id = None):
         FwObject.__init__(self, origin_address, obj_name, username, password)
         self.port = port
+        self.id = id
 
     def dns_usage(self) -> bool:
         return False

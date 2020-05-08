@@ -1,4 +1,5 @@
 import re
+from typing import Set
 
 from engine.objects.asa.asa_object import AsaObject
 from engine.objects.base_objects import FqdnObject, ReturnCode
@@ -40,3 +41,6 @@ class AsaFqdnObject(AsaObject, FqdnObject):
 
         self.name = re.search("object network (.+) fqdn", self.raw_config).group(1)
         return ReturnCode.SUCCESS
+
+    def _acl_attr_string(self) -> str:
+        return self.fqdn

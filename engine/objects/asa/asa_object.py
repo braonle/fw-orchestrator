@@ -42,9 +42,29 @@ class AsaObject(FwObject):
         return False
 
     def acl_usage(self) -> List[AclEntry]:
-        return []
+        lst = self._acl_usage_names(self.name)
+        lst = lst.union(self._acl_usage_names(self._acl_attr_string()))
+        res = []
 
-    def _acl_usage_string(self, command_key) -> Set[str]:
+        for x in lst:
+            entries = self.cli_command("sho access-l " + x + " | i " + self._acl_attr_string()).splitlines()
+            hitcnt = 0
+            for s in entries:
+                expr = re.search("\(hitcnt=([0-9]+)\)", s)
+                if expr is not None:
+                    hitcnt += int(expr.group(1))
+
+            acl = AclEntry()
+            acl.acl_name = x
+            acl.hit_count = hitcnt
+            res.append(acl)
+
+        return res
+
+    def _acl_attr_string(self) -> str:
+        pass
+
+    def _acl_usage_names(self, command_key) -> Set[str]:
         command = "sho run access-list | i " + command_key
         ace = self.cli_command(command).splitlines()
         lst = []
@@ -55,7 +75,7 @@ class AsaObject(FwObject):
         return set(lst)
 
     def hostname(self) -> str:
-        return self.cli_command("sho hostname").split()[1]
+        return self.cli_command("sho hostname")
 
     def systime(self) -> str:
         return self.cli_command("sho clock")

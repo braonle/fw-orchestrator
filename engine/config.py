@@ -1,4 +1,4 @@
 AUTH_TYPE = "global"
 USERNAME = "admin"
-PASSWORD = "cisco"
-SECRET = ""
+PASSWORD = "Cisco123"
+SECRET = "Cisco123"

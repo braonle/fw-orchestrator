@@ -1,6 +1,7 @@
 import re
-
 from ipaddress import ip_address, IPv4Address
+from typing import Set
+
 from engine.objects.asa.asa_object import AsaObject
 from engine.objects.base_objects import AddrRangeObject, ReturnCode
 from engine.config import *
@@ -43,3 +44,6 @@ class AsaRangeObject(AsaObject, AddrRangeObject):
 
         self.name = re.search("object network (.+) range", self.raw_config).group(1)
         return ReturnCode.SUCCESS
+
+    def _acl_attr_string(self) -> str:
+        return str(self.first_addr) + " " + str(self.last_addr)
