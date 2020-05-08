@@ -1,8 +1,8 @@
 from ipaddress import ip_address, IPv4Address
 
 from engine.objects.base_objects import HostObject, ReturnCode
-from engine.objects.ftd.fdm_api_util import (fdm_login, fdm_get_networks,
-    fdm_get_ntp, fdm_get_dns_server_groups)
+from engine.objects.ftd.fdm_api_util import (fdm_login, fdm_get_networks, fdm_get_ntp,
+    fdm_get_dns_server_groups, fdm_get_data_dns_settings, fdm_get_device_dns_settings)
 from engine.objects.ftd.ftd_object import FtdObject
 
 from engine.config import *
@@ -10,7 +10,8 @@ from engine.config import *
 
 class FtdHostObject(FtdObject, HostObject):
 
-    def __init__(self, origin_address: str, port: int = 0, ip_addr: IPv4Address = None, obj_name: str = None,
+    def __init__(self, origin_address: str, port: int = 0,
+                 ip_addr: IPv4Address = None, obj_name: str = None,
                  username: str = USERNAME, password: str = PASSWORD):
         FtdObject.__init__(self, origin_address, port, obj_name, username, password)
         HostObject.__init__(self, ip_addr)
@@ -73,10 +74,18 @@ class FtdHostObject(FtdObject, HostObject):
                           host=self.origin_addr,
                           port=self.port)
 
-        for i in dns['items']:
-            for dns_server in i['dnsServers']:
+        for dns_server_group in dns['items']:
+            for dns_server in dns_server_group['dnsServers']:
                 if dns_server['ipAddress'] == str(self.ip_addr):
-                    return True
+                    device_dns = fdm_get_device_dns_settings(token,
+                                      host=self.origin_addr,
+                                      port=self.port)
+                    data_dns = fdm_get_data_dns_settings(token,
+                                      host=self.origin_addr,
+                                      port=self.port)
+                    if device_dns['items'][0]['dnsServerGroup']['id'] == dns_server_group['id'] \
+                    or data_dns['items'][0]['dnsServerGroup']['id'] == dns_server_group['id']:
+                        return True
 
         return False
 
@@ -95,7 +104,7 @@ class FtdHostObject(FtdObject, HostObject):
         for i in ntp['items']:
             for ntp_server in i['ntpServers']:
                 if ntp_server == str(self.ip_addr):
-                    # if i['enabled']:
-                    return True
+                    if i['enabled']:
+                        return True
 
         return False

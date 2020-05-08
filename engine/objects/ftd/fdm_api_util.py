@@ -76,7 +76,7 @@ def fdm_get_networks(
     }
 
     response = requests.get(
-        f"https://{host}:{port}/api/fdm/latest/object/networks",
+        f"https://{host}:{port}/api/fdm/latest/object/networks?limit=0",
         headers=headers,
         verify=False,
     )
@@ -159,7 +159,53 @@ def fdm_get_dns_server_groups(
     }
 
     response = requests.get(
-        f"https://{host}:{port}/api/fdm/latest/object/dnsservergroups",
+        f"https://{host}:{port}/api/fdm/latest/object/dnsservergroups?limit=0",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+
+def fdm_get_data_dns_settings(
+    access_token,
+    host,
+    port,
+):
+    """Get the data DNS settings in FDM."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/devices/default/datadnssettings",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+
+def fdm_get_device_dns_settings(
+    access_token,
+    host,
+    port,
+):
+    """Get the device DNS settings in FDM."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/devices/default/mgmtdnssettings",
         headers=headers,
         verify=False,
     )
@@ -182,7 +228,7 @@ def fdm_get_access_policies(
     }
 
     response = requests.get(
-        f"https://{host}:{port}/api/fdm/latest/policy/accesspolicies",
+        f"https://{host}:{port}/api/fdm/latest/policy/accesspolicies?limit=0",
         headers=headers,
         verify=False,
     )
@@ -206,7 +252,55 @@ def fdm_get_access_rules(
     }
 
     response = requests.get(
-        f"https://{host}:{port}/api/fdm/latest/policy/accesspolicies/{access_policy_id}/accessrules",
+        f"https://{host}:{port}/api/fdm/latest/policy/accesspolicies/{access_policy_id}/accessrules?limit=9999999",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+
+def fdm_get_hitcount(
+    access_token,
+    host,
+    port,
+    access_policy_id,
+    access_rule_id
+):
+    """Get the hitcounts for a specific access rule of an access policy."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/policy/accesspolicies/{access_policy_id}/operational/hitcounts?filter=ids:{access_rule_id}",
+        headers=headers,
+        verify=False,
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+
+def fdm_get_hostnames(
+    access_token,
+    host,
+    port
+):
+    """Get the list of the hostnames in FDM."""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(
+        f"https://{host}:{port}/api/fdm/latest/devicesettings/default/devicehostnames",
         headers=headers,
         verify=False,
     )

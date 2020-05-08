@@ -72,7 +72,7 @@ class FtdFqdnObject(FtdObject, FqdnObject):
             for i in ntp['items']:
                 for ntp_server in i['ntpServers']:
                     if ntp_server == self.fqdn:
-                        # if i['enabled']:
-                        return True
+                        if i['enabled']:
+                            return True
 
             return False

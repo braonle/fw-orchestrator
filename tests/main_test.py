@@ -9,7 +9,7 @@ repository_root = (here / ".." ).resolve()
 sys.path.insert(1, str(repository_root))
 
 from hosts import FDM
-import tests.asa_object_test as asa
+# import tests.asa_object_test as asa
 import tests.ftd_object_test as ftd
 import engine.objects.ftd.fdm_api_util as ftd_util
 
@@ -20,8 +20,9 @@ NETWORK = "192.168.12.0/24"
 FQDN = "host.example.local"
 LIST = ["192.168.0.1", "192.168.0.100"]
 
-DNS = "208.67.222.222"
-NTP_FQDN = "0.sourcefire.pool.ntp.org"
+DNS = "173.38.200.100"
+NTP_FQDN = "1.ntp.esl.cisco.com"
+# NTP_FQDN_2 = "0.sourcefire.pool.ntp.org"
 
 # ASA section
 # asa.named_object_test(OBJECT_NAME)
@@ -59,7 +60,7 @@ ftd_util.fdm_create_network(token,
                             name = OBJECT_NAME + "-FQDN",
                             description = "Test FQDN from Python",
                             subType = "FQDN",
-                            value = FQDN)
+                            value = NTP_FQDN)
 ftd_util.fdm_create_network(token,
                             host=FDM.get("host"),
                             port=FDM.get("port"),
@@ -81,3 +82,4 @@ ftd.unknown_addressed_object_test()
 ftd.dns_object_test(OBJECT_NAME)
 ftd.ntp_object_test(OBJECT_NAME)
 ftd.acl_object_test(OBJECT_NAME)
+ftd.hostname_test(OBJECT_NAME)

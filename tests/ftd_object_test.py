@@ -267,7 +267,9 @@ def acl_object_test(name: str):
         password=FDM.get("password"),
         obj_name=name + "-HOST")
     obj.fetch_config()
-    print(obj.name + " -> " + str(obj.acl_usage()))
+    print(obj.name + " -> " )
+    for acl in obj.acl_usage():
+        print("  " + str(acl))
     print()
 
     print("Test FTD network ACL object:")
@@ -278,7 +280,9 @@ def acl_object_test(name: str):
         password=FDM.get("password"),
         obj_name=name + "-NETWORK")
     obj.fetch_config()
-    print(obj.name + " -> " + str(obj.acl_usage()))
+    print(obj.name + " -> " )
+    for acl in obj.acl_usage():
+        print("  " + str(acl))
     print()
 
     print("Test FTD FQDN ACL object:")
@@ -289,7 +293,9 @@ def acl_object_test(name: str):
         password=FDM.get("password"),
         obj_name=name + "-FQDN")
     obj.fetch_config()
-    print(obj.name + " -> " + str(obj.acl_usage()))
+    print(obj.name + " -> " )
+    for acl in obj.acl_usage():
+        print("  " + str(acl))
     print()
 
     print("Test FTD range ACL object:")
@@ -300,5 +306,19 @@ def acl_object_test(name: str):
         password=FDM.get("password"),
         obj_name=name + "-RANGE")
     obj.fetch_config()
-    print(obj.name + " -> " + str(obj.acl_usage()))
+    print(obj.name + " -> " )
+    for acl in obj.acl_usage():
+        print("  " + str(acl))
+    print()
+
+
+def hostname_test(name: str):
+    print("Test FTD hostname:")
+    obj = FtdHostObject(
+        origin_address=FDM.get("host"),
+        port=FDM.get("port"),
+        username=FDM.get("username"),
+        password=FDM.get("password"),
+        obj_name=name + "-HOST")
+    print(obj.name + " -> " + str(obj.hostname()))
     print()
