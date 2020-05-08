@@ -1,3 +1,20 @@
+#
+#	Copyright (c) 2020 Cisco and/or its affiliates.
+#
+#	This software is licensed to you under the terms of the Cisco Sample
+#	Code License, Version 1.1 (the "License"). You may obtain a copy of the
+#	License at
+#
+#		       https://developer.cisco.com/docs/licenses
+#
+#	All use of the material herein must be in accordance with the terms of
+#	the License. All rights not expressly granted by the License are
+#	reserved. Unless required by applicable law or agreed to separately in
+#	writing, software distributed under the License is distributed on an "AS
+#	IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#	or implied.
+#
+
 import sys
 from pathlib import Path
 
@@ -11,6 +28,7 @@ sys.path.insert(1, str(repository_root))
 from hosts import FDM
 # import tests.asa_object_test as asa
 import tests.ftd_object_test as ftd
+import tests.asa_object_test as asa
 import engine.objects.ftd.fdm_api_util as ftd_util
 
 
@@ -24,15 +42,14 @@ DNS = "173.38.200.100"
 NTP_FQDN = "1.ntp.esl.cisco.com"
 # NTP_FQDN_2 = "0.sourcefire.pool.ntp.org"
 
-# ASA section
-# asa.named_object_test(OBJECT_NAME)
-# asa.addressed_object_test(HOST, NETWORK, FQDN, LIST)
-# asa.unknown_addressed_object_test()
-# asa.dns_object_test(OBJECT_NAME)
-# asa.ntp_object_test(OBJECT_NAME)
-# asa.acl_object_test(OBJECT_NAME)
+#ASA section
+asa.named_object_test(OBJECT_NAME)
+asa.addressed_object_test(HOST, NETWORK, FQDN, LIST)
+asa.unknown_addressed_object_test()
+asa.dns_object_test(OBJECT_NAME)
+asa.ntp_object_test(OBJECT_NAME)
+asa.acl_object_test(OBJECT_NAME)
 
-# exit(0)
 
 # FTD section
 token = ftd_util.fdm_login(

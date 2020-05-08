@@ -15,19 +15,17 @@
 #	or implied.
 #
 
-from engine.objects.device import DeviceTypes, Device
+from enum import Enum
 
-# Environment variables
+class DeviceTypes(Enum):
+    ASA = 1
+    FTD = 2
 
-FDM = {
-    "host": "127.0.0.1", #ip
-    "port": 443,
-    "username": "",
-    "password": "",
-}
 
-# Inventory
-HOSTS = [
-    Device(DeviceTypes.ASA, "127.0.0.2"),
-    Device(DeviceTypes.FTD, "127.0.0.3")
-]
+class Device:
+    type: DeviceTypes
+    ip_addr: str
+
+    def __init__(self, type: DeviceTypes, address: str):
+        self.ip_addr = address
+        self.type = type

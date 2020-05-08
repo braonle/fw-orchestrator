@@ -1,5 +1,24 @@
-from flask import Flask, request, render_template, json
+#
+#	Copyright (c) 2020 Cisco and/or its affiliates.
+#
+#	This software is licensed to you under the terms of the Cisco Sample
+#	Code License, Version 1.1 (the "License"). You may obtain a copy of the
+#	License at
+#
+#		       https://developer.cisco.com/docs/licenses
+#
+#	All use of the material herein must be in accordance with the terms of
+#	the License. All rights not expressly granted by the License are
+#	reserved. Unless required by applicable law or agreed to separately in
+#	writing, software distributed under the License is distributed on an "AS
+#	IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#	or implied.
+#
+
+from flask import Flask, request, render_template
 from ipaddress import ip_address, ip_network
+
+from engine.objects.base_objects import ResultObject, ReturnCode
 from engine.objects.ftd.ftd_host_object import FtdHostObject
 from engine.objects.ftd.ftd_fqdn_object import FtdFqdnObject
 from engine.objects.ftd.ftd_network_object import FtdNetworkObject
@@ -8,8 +27,7 @@ from engine.objects.asa.asa_host_object import AsaHostObject
 from engine.objects.asa.asa_fqdn_object import AsaFqdnObject
 from engine.objects.asa.asa_network_object import AsaNetworkObject
 from engine.objects.asa.asa_range_object import AsaRangeObject
-
-from engine.managers.device import DeviceTypes
+from engine.objects.device import DeviceTypes
 from hosts import HOSTS
 
 app = Flask(__name__)
@@ -26,16 +44,16 @@ def get_object_usage(device_list: list) -> list:
     output_list = []
 
     for x in device_list:
-        x.fetch_config()
-        obj = x.usage()
-        
-        output = 'Name: ' + str(obj.obj_name) + '<br/>' + \
-                 'Origin Address: ' + str(obj.origin_addr) + '<br/>' + \
-                 'Origin Name: ' + str(x.hostname()) + '<br/>' + \
-                 'ACL: ' + list_to_str(obj.acl_list) + '<br/>' + \
-                 'DNS: ' + str(obj.dns) + '<br/>' + \
-                 'NTP: ' + str(obj.ntp) + '<br/><br/>'
-        output_list.append(output)
+        if x.fetch_config() == ReturnCode.SUCCESS:
+            obj = x.usage()
+
+            output = 'Name: ' + str(obj.obj_name) + '<br/>' + \
+                     'Origin Address: ' + str(obj.origin_addr) + '<br/>' + \
+                     'Origin Name: ' + str(x.hostname()) + '<br/>' + \
+                     'ACL: ' + list_to_str(obj.acl_list) + '<br/>' + \
+                     'DNS: ' + str(obj.dns) + '<br/>' + \
+                     'NTP: ' + str(obj.ntp) + '<br/><br/>'
+            output_list.append(output)
 
     return output_list
 
