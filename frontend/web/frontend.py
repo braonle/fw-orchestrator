@@ -14,7 +14,7 @@ from hosts import HOSTS
 
 app = Flask(__name__)
 
-
+ASA_ADDRESS = "10.62.18.24"
 def list_to_str(l : list) -> str:
     res = ''
     for x in l:
@@ -28,9 +28,10 @@ def get_object_usage(device_list: list) -> list:
     for x in device_list:
         x.fetch_config()
         obj = x.usage()
-
+        
         output = 'Name: ' + str(obj.obj_name) + '<br/>' + \
                  'Origin Address: ' + str(obj.origin_addr) + '<br/>' + \
+                 'Origin Name: ' + str(x.hostname()) + '<br/>' + \
                  'ACL: ' + list_to_str(obj.acl_list) + '<br/>' + \
                  'DNS: ' + str(obj.dns) + '<br/>' + \
                  'NTP: ' + str(obj.ntp) + '<br/><br/>'
@@ -59,7 +60,7 @@ def host():
                 if x.type == DeviceTypes.ASA:
                     device_list.append(AsaHostObject(origin_address=x.ip_addr, obj_name=name))
                 elif x.type == DeviceTypes.FTD:
-                    device_list.append(FtdHostObject(origin_address=x.ip_addr, ip_addr=ip_address(ip_addr)))
+                    device_list.append(FtdHostObject(origin_address=x.ip_addr, obj_name=name))
         else:
             name = 'Empty hostname'
 
@@ -82,9 +83,20 @@ def fqdn():
     fqdn_str = ''
     device_list = []
     output_list = []
+    name=''
 
     if request.method == "POST":
         fqdn_str = request.form.get('fqdn_str')
+        name = request.form.get('name')
+
+        if len(name) != 0:
+            for x in HOSTS:
+                if x.type == DeviceTypes.ASA:
+                    device_list.append(AsaFqdnObject(origin_address=x.ip_addr, obj_name=name))
+                elif x.type == DeviceTypes.FTD:
+                    device_list.append(FtdFqdnObject(origin_address=x.ip_addr, obj_name=name))
+        else:
+            name = 'Empty field'
 
         if len(fqdn_str) != 0:
             for x in HOSTS:
@@ -97,7 +109,7 @@ def fqdn():
 
         output_list = get_object_usage(device_list)
         
-    return render_template('fqdn.html', fqdn_str=fqdn_str, output_list=output_list) 
+    return render_template('fqdn.html', name=name, fqdn_str=fqdn_str, output_list=output_list) 
 
 
 @app.route('/rangeof', methods=['GET','POST'])
@@ -105,11 +117,23 @@ def rangeof():
     device_list = []
     output_list = []
     first = last = ''
+    name = ''
 
     if request.method == "POST":
         lst = request.form.getlist('values')
         first = str(lst[0])
         last = str(lst[1])
+        name = request.form.get('name')
+
+        if len(name) != 0:
+            for x in HOSTS:
+                if x.type == DeviceTypes.ASA:
+                    device_list.append(AsaHostObject(origin_address=x.ip_addr, obj_name=name))
+                elif x.type == DeviceTypes.FTD:
+                    device_list.append(FtdHostObject(origin_address=x.ip_addr, obj_name=name))
+        else:
+            name = 'Empty field'
+
 
         if len(first) and len(last) != 0:
             for x in HOSTS:
@@ -123,7 +147,7 @@ def rangeof():
 
         output_list = get_object_usage(device_list)
 
-    return render_template('rangeof.html', first=first, last=last, output_list=output_list) 
+    return render_template('rangeof.html', first=first, last=last, name=name, output_list=output_list) 
 
 
 @app.route('/network', methods=['GET', 'POST'])
@@ -131,10 +155,22 @@ def network():
     device_list = []
     output_list = []
     prefix = ''
+    name=''
 
     if request.method == "POST":
         prefix = request.form.get('prefix')
-        
+        name = request.form.get('name')
+
+        if len(name) != 0:
+            for x in HOSTS:
+                if x.type == DeviceTypes.ASA:
+                    device_list.append(AsaHostObject(origin_address=x.ip_addr, obj_name=name))
+                elif x.type == DeviceTypes.FTD:
+                    device_list.append(FtdHostObject(origin_address=x.ip_addr, obj_name=name))
+        else:
+            name = 'Empty field'
+
+
         if len(prefix) != 0:
             for x in HOSTS:
                 if x.type == DeviceTypes.ASA:
@@ -146,4 +182,4 @@ def network():
 
         output_list = get_object_usage(device_list)
 
-    return render_template('network.html', prefix=prefix, output_list=output_list)
+    return render_template('network.html', name=name, prefix=prefix, output_list=output_list)
