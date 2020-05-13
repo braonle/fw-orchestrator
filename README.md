@@ -11,20 +11,20 @@ This license is free, enables our customers and partners to do everything they n
 Ubuntu installation:
 
 ```shell
-$ python3 -m venv venv
-$ source venv/bin/activate
-$ pip3 install -r requirements.txt
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
 ## Configuration
 
-Scripts are expected to be executed in a trusted environment with proper security settings. Credentials for access to ASA/FTD are stored in engine/config.py. Inventory is held in hosts.py.
+Scripts are expected to be executed in a trusted environment with proper security settings. Credentials for access to ASA/FTD are stored in ![config.py](engine/config.py). Inventory is held in ![hosts.py](hosts.py).
 
 ## Launching
 
 WSGI server is recommended for production environment. For test and development use:
 ```shell
-$ python3 main.py
+python3 main.py
 ```
 WebUi is accessible at http://0.0.0.0:5000 by default.
 ![WebUI screenshot](img/webui.png)
