@@ -18,7 +18,7 @@ pip3 install -r requirements.txt
 
 ## Configuration
 
-Scripts are expected to be executed in a trusted environment with proper security settings. Credentials for access to ASA/FTD are stored in engine/config.py. Inventory is held in hosts.py.
+Scripts are expected to be executed in a trusted environment with proper security settings. Credentials for access to ASA/FTD are stored in ![config.py](engine/config.py). Inventory is held in ![hosts.py](hosts.py).
 
 ## Launching
 
