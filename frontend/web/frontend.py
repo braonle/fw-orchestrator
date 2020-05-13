@@ -14,11 +14,11 @@
 #	IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 #	or implied.
 #
-
+import multiprocessing as mp
+from typing import List
 from flask import Flask, request, render_template
 from ipaddress import ip_address, ip_network
-
-from engine.objects.base_objects import ResultObject, ReturnCode
+from engine.objects.base_objects import FwObject
 from engine.objects.ftd.ftd_host_object import FtdHostObject
 from engine.objects.ftd.ftd_fqdn_object import FtdFqdnObject
 from engine.objects.ftd.ftd_network_object import FtdNetworkObject
@@ -28,33 +28,16 @@ from engine.objects.asa.asa_fqdn_object import AsaFqdnObject
 from engine.objects.asa.asa_network_object import AsaNetworkObject
 from engine.objects.asa.asa_range_object import AsaRangeObject
 from engine.objects.device import DeviceTypes
+from frontend.web.mp_support import mp_get_object_usage
 from hosts import HOSTS
 
+
 app = Flask(__name__)
+pool = mp.Pool(mp.cpu_count())
 
-ASA_ADDRESS = "10.62.18.24"
-def list_to_str(l : list) -> str:
-    res = ''
-    for x in l:
-        res = res + " " + str(x)
-    return res
-
-
-def get_object_usage(device_list: list) -> list:
-    output_list = []
-
-    for x in device_list:
-        if x.fetch_config() == ReturnCode.SUCCESS:
-            obj = x.usage()
-
-            output = 'Name: ' + str(obj.obj_name) + '<br/>' + \
-                     'Origin Address: ' + str(obj.origin_addr) + '<br/>' + \
-                     'Origin Name: ' + str(x.hostname()) + '<br/>' + \
-                     'ACL: ' + list_to_str(obj.acl_list) + '<br/>' + \
-                     'DNS: ' + str(obj.dns) + '<br/>' + \
-                     'NTP: ' + str(obj.ntp) + '<br/><br/>'
-            output_list.append(output)
-
+def get_object_usage(device_list: List[FwObject]) -> List[str]:
+    output_list = pool.map(mp_get_object_usage, device_list)
+    output_list = list(filter(lambda a: a != "", output_list))
     return output_list
 
 
@@ -130,7 +113,7 @@ def fqdn():
     return render_template('fqdn.html', name=name, fqdn_str=fqdn_str, output_list=output_list) 
 
 
-@app.route('/rangeof', methods=['GET','POST'])
+@app.route('/rangeof', methods=['GET', 'POST'])
 def rangeof():
     device_list = []
     output_list = []
