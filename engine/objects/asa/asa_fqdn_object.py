@@ -34,7 +34,7 @@ class AsaFqdnObject(AsaObject, FqdnObject):
         elif (self.name is not None) and (self.fqdn is None):
             return self.__named_fetch()
         else:
-            self.raw_config = ""
+            self.raw_config = []
             return ReturnCode.INVALID_FIELDS
 
     def __named_fetch(self) -> ReturnCode:
@@ -44,7 +44,7 @@ class AsaFqdnObject(AsaObject, FqdnObject):
         if len(self.raw_config) == 0:
             return ReturnCode.OBJECT_NOT_FOUND
 
-        self.fqdn = re.search("fqdn (.+)", self.raw_config).group(1)
+        self.fqdn = re.search("fqdn (.+)", self.raw_config[0]).group(1)
         return ReturnCode.SUCCESS
 
     def __fqdn_fetch(self) -> ReturnCode:
@@ -54,7 +54,7 @@ class AsaFqdnObject(AsaObject, FqdnObject):
         if len(self.raw_config) == 0:
             return ReturnCode.OBJECT_NOT_FOUND
 
-        self.name = re.search("object network (.+) fqdn", self.raw_config).group(1)
+        self.name = re.search("object network (.+) fqdn", self.raw_config[0]).group(1)
         return ReturnCode.SUCCESS
 
     def _acl_attr_string(self) -> str:

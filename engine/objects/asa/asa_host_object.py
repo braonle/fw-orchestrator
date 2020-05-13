@@ -36,7 +36,7 @@ class AsaHostObject(AsaObject, HostObject):
             self.__named_fetch()
             return ReturnCode.SUCCESS
         else:
-            self.raw_config = ""
+            self.raw_config = []
             return ReturnCode.INVALID_FIELDS
 
     def __named_fetch(self) -> ReturnCode:
@@ -46,7 +46,7 @@ class AsaHostObject(AsaObject, HostObject):
         if len(self.raw_config) == 0:
             return ReturnCode.OBJECT_NOT_FOUND
 
-        self.ip_addr = ip_address(re.search("host (.+)", self.raw_config).group(1))
+        self.ip_addr = ip_address(re.search("host (.+)", self.raw_config[0]).group(1))
         return ReturnCode.SUCCESS
 
     def __addr_fetch(self) -> ReturnCode:
@@ -56,7 +56,7 @@ class AsaHostObject(AsaObject, HostObject):
         if len(self.raw_config) == 0:
             return ReturnCode.OBJECT_NOT_FOUND
 
-        self.name = re.search("object network (.+) host", self.raw_config).group(1)
+        self.name = re.search("object network (.+) host", self.raw_config[0]).group(1)
         return ReturnCode.SUCCESS
 
     def dns_usage(self) -> bool:

@@ -16,15 +16,19 @@
 #
 
 import re
+import paramiko
 from typing import List, Set
-from netmiko import ConnectHandler
+from time import sleep
 from engine.objects.base_objects import FwObject, AclEntry
 from engine.config import *
 
 
 class AsaObject(FwObject):
 
-    raw_config: str
+    BUFFER = 65535
+    DELAY = 0.25
+
+    raw_config: List[str]
     secret: str
 
     def __init__(self, origin_address: str, obj_name: str = None,
@@ -32,22 +36,34 @@ class AsaObject(FwObject):
         FwObject.__init__(self, origin_address, obj_name, username, password)
         self.secret = secret
 
-    def cli_command(self, command: str) -> str:
-        device_params = {
-            'device_type': 'cisco_asa',
-            'ip': str(self.origin_addr),
-            'username': self.username,
-            'password': self.password,
-            'secret': self.secret
-        }
+    def cli_command(self, command: str) -> List[str]:
 
-        result = ""
+        pre_conn = paramiko.SSHClient()
+        pre_conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        pre_conn.connect(str(self.origin_addr),
+                    username=self.username,
+                    password=self.password,
+                            look_for_keys=False,
+                    allow_agent=False)
+        conn = pre_conn.invoke_shell()
+        conn.recv(self.BUFFER)
+        conn.send('enable\n')
+        conn.send(self.secret + '\n')
+        sleep(self.DELAY)
+        conn.recv(self.BUFFER)
 
-        with ConnectHandler(**device_params) as ssh:
-            ssh.enable()
-            result = ssh.send_command(command).rstrip()
+        conn.send(command + '\n')
+        sleep(self.DELAY)
+        output = conn.recv(self.BUFFER)
 
-        return result
+        lines = str(output).split("\\r\\n")
+        # Popping command and prompt
+        lines.pop(0)
+        lines.pop(len(lines) - 1)
+
+        pre_conn.close()
+
+        return lines
 
     def dns_usage(self) -> bool:
         return False
@@ -61,7 +77,7 @@ class AsaObject(FwObject):
         res = []
 
         for x in lst:
-            entries = self.cli_command("sho access-l " + x + " | i " + self._acl_attr_string()).splitlines()
+            entries = self.cli_command("sho access-l " + x + " | i " + self._acl_attr_string())
             hitcnt = 0
             for s in entries:
                 expr = re.search("\(hitcnt=([0-9]+)\)", s)
@@ -80,7 +96,7 @@ class AsaObject(FwObject):
 
     def _acl_usage_names(self, command_key) -> Set[str]:
         command = "sho run access-list | i " + command_key
-        ace = self.cli_command(command).splitlines()
+        ace = self.cli_command(command)
         lst = []
 
         for x in ace:
@@ -89,7 +105,7 @@ class AsaObject(FwObject):
         return set(lst)
 
     def hostname(self) -> str:
-        return self.cli_command("sho hostname")
+        return self.cli_command("sho hostname")[0]
 
     def systime(self) -> str:
-        return self.cli_command("sho clock")
+        return self.cli_command("sho clock")[0]

@@ -36,7 +36,7 @@ class AsaNetworkObject(AsaObject, NetworkObject):
         elif (self.name is not None) and (self.prefix is None):
             return self.__named_fetch()
         else:
-            self.raw_config = ""
+            self.raw_config = []
 
     def __named_fetch(self) -> ReturnCode:
         command = "sh run obj in | i " + self.name + " subnet"
@@ -45,7 +45,7 @@ class AsaNetworkObject(AsaObject, NetworkObject):
         if len(self.raw_config) == 0:
             return ReturnCode.OBJECT_NOT_FOUND
 
-        self.prefix = ip_network(re.search("subnet (.+)", self.raw_config).group(1).replace(" ", "/"))
+        self.prefix = ip_network(re.search("subnet (.+)", self.raw_config[0]).group(1).replace(" ", "/"))
         return ReturnCode.SUCCESS
 
     def __prefix_fetch(self) -> ReturnCode:
@@ -56,7 +56,7 @@ class AsaNetworkObject(AsaObject, NetworkObject):
         if len(self.raw_config) == 0:
             return ReturnCode.OBJECT_NOT_FOUND
 
-        self.name = re.search("object network (.+) subnet", self.raw_config).group(1)
+        self.name = re.search("object network (.+) subnet", self.raw_config[0]).group(1)
         return ReturnCode.SUCCESS
 
     def _acl_attr_string(self) -> str:

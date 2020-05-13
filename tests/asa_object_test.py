@@ -47,7 +47,7 @@ access-list ACL3 extended permit ip 192.168.12.0 255.255.255.0 any
 
 '''
 
-ASA_ADDRESS = "127.0.0.1"
+ASA_ADDRESS = "10.62.18.24"
 
 def named_object_test(name: str):
     print("Test ASA host named object:")

@@ -35,7 +35,7 @@ class AsaRangeObject(AsaObject, AddrRangeObject):
         elif (self.name is not None) and (self.first_addr is None and self.last_addr is None):
             return self.__named_fetch()
         else:
-            self.raw_config = ""
+            self.raw_config = []
             return ReturnCode.INVALID_FIELDS
 
     def __named_fetch(self) -> ReturnCode:
@@ -45,7 +45,7 @@ class AsaRangeObject(AsaObject, AddrRangeObject):
         if len(self.raw_config) == 0:
             return ReturnCode.OBJECT_NOT_FOUND
 
-        (first, last) = re.search("range (.+)", self.raw_config).group(1).split()
+        (first, last) = re.search("range (.+)", self.raw_config[0]).group(1).split()
         self.first_addr = ip_address(first)
         self.last_addr = ip_address(last)
         return ReturnCode.SUCCESS
@@ -57,7 +57,7 @@ class AsaRangeObject(AsaObject, AddrRangeObject):
         if len(self.raw_config) == 0:
             return ReturnCode.OBJECT_NOT_FOUND
 
-        self.name = re.search("object network (.+) range", self.raw_config).group(1)
+        self.name = re.search("object network (.+) range", self.raw_config[0]).group(1)
         return ReturnCode.SUCCESS
 
     def _acl_attr_string(self) -> str:
