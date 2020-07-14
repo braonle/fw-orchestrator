@@ -28,3 +28,16 @@ python3 main.py
 ```
 WebUi is accessible at http://0.0.0.0:5000 by default.
 ![WebUI screenshot](img/webui.png)
+
+## Tools
+Python 3.6.9 minimum:
+* paramiko ![2.7.1](http://www.paramiko.org)  
+* flask ![1.1.2](https://pypi.org/project/Flask/)
+* requests ![2.23.0](https://requests.readthedocs.io/en/master/)
+* urllib3 ![1.25.6](https://urllib3.readthedocs.io/en/latest/)
+
+GNS3 ![2.2.10](https://www.gns3.com/)
+
+ASAv ![9.9.2](https://software.cisco.com/)
+
+FTDv ![6.5.0](https://software.cisco.com/)
